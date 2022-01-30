@@ -19,7 +19,10 @@ app.message(/(https?:\/\/(www\.)?notion\.so\/[A-z0-9\-_]+\/[A-z0-9\-_#?=&;]+)/, 
   const url = context.matches[0].replace(/&amp;/, '&')
 
   const parsedUrl = new URL(url)
-  const page_id = parsedUrl.pathname.replace(/^\/[0-9A-z]+\//, '').split('-').splice(-1)[0]
+  const parsePageIdFromPathname = (pathname: string) => pathname.replace(/^\/[0-9A-z\-_]+\//, '').split('-').splice(-1)[0]
+  const page_id: string = parsedUrl.searchParams.get('p') !== null
+    ? parsedUrl.searchParams.get('p') ?? parsePageIdFromPathname(parsedUrl.pathname)
+    : parsePageIdFromPathname(parsedUrl.pathname)
   const block_id = parsedUrl.hash.slice(1)
 
   const page = await notion.pages.retrieve({ page_id })
