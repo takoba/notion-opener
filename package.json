@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@notionhq/client": "^0.4.13",
-    "@slack/bolt": "^3.9.0",
-    "url-parse": "^1.5.4"
+    "@slack/bolt": "^3.9.0"
   }
 }

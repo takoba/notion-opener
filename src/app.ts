@@ -1,6 +1,6 @@
 import { Client } from '@notionhq/client'
 import {App, ContextBlock, DividerBlock, KnownBlock, SectionBlock} from '@slack/bolt'
-import URLParse from 'url-parse'
+import { URL } from 'url'
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -12,14 +12,17 @@ const notion = new Client({
 })
 
 
-app.message(/(https?:\/\/([A-z0-9\-]*\.)?notion\.so\/[A-z0-9\-_#\/]+)/, async ({ message, context, say}) => {
+app.message(/(https?:\/\/(www\.)?notion\.so\/[A-z0-9\-_]+\/[A-z0-9\-_#?=&;]+)/, async ({ message, context, say}) => {
   console.debug("DEBUG: dump `message`", message)
   console.debug("DEBUG: dump `context`", context)
 
-  const url = context.matches[0]
+  const url = context.matches[0].replace(/&amp;/, '&')
 
-  const parsedUrl = new URLParse(url)
-  const page_id = parsedUrl.pathname.replace(/^\/[0-9A-z]+\//, '').split('-').splice(-1)[0]
+  const parsedUrl = new URL(url)
+  const parsePageIdFromPathname = (pathname: string) => pathname.replace(/^\/[0-9A-z\-_]+\//, '').split('-').splice(-1)[0]
+  const page_id: string = parsedUrl.searchParams.get('p') !== null
+    ? parsedUrl.searchParams.get('p') ?? parsePageIdFromPathname(parsedUrl.pathname)
+    : parsePageIdFromPathname(parsedUrl.pathname)
   const block_id = parsedUrl.hash.slice(1)
 
   const page = await notion.pages.retrieve({ page_id })
