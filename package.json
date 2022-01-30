@@ -6,6 +6,11 @@
   "author": "takoba <plane25@gmail.com>",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "start": "node dist/app.js",
+    "build": "tsc --outDir dist/",
+    "typecheck": "tsc --noEmit"
+  },
   "devDependencies": {
     "@types/node": "^17.0.13",
     "@types/url-parse": "^1.4.7",
