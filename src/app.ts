@@ -12,11 +12,11 @@ const notion = new Client({
 })
 
 
-app.message(/(https?:\/\/([A-z0-9\-]*\.)?notion\.so\/[A-z0-9\-_#\/]+)/, async ({ message, context, say}) => {
+app.message(/(https?:\/\/(www\.)?notion\.so\/[A-z0-9\-_]+\/[A-z0-9\-_#?=&;]+)/, async ({ message, context, say}) => {
   console.debug("DEBUG: dump `message`", message)
   console.debug("DEBUG: dump `context`", context)
 
-  const url = context.matches[0]
+  const url = context.matches[0].replace(/&amp;/, '&')
 
   const parsedUrl = new URL(url)
   const page_id = parsedUrl.pathname.replace(/^\/[0-9A-z]+\//, '').split('-').splice(-1)[0]
