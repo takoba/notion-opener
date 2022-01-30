@@ -1,6 +1,6 @@
 import { Client } from '@notionhq/client'
 import {App, ContextBlock, DividerBlock, KnownBlock, SectionBlock} from '@slack/bolt'
-import URLParse from 'url-parse'
+import { URL } from 'url'
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -18,7 +18,7 @@ app.message(/(https?:\/\/([A-z0-9\-]*\.)?notion\.so\/[A-z0-9\-_#\/]+)/, async ({
 
   const url = context.matches[0]
 
-  const parsedUrl = new URLParse(url)
+  const parsedUrl = new URL(url)
   const page_id = parsedUrl.pathname.replace(/^\/[0-9A-z]+\//, '').split('-').splice(-1)[0]
   const block_id = parsedUrl.hash.slice(1)
 
