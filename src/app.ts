@@ -24,7 +24,7 @@ app.message(/(https?:\/\/(www\.)?notion\.so\/[A-z0-9\-_]+\/[A-z0-9\-_#?=&;]+)/, 
   const page_id: string = parsedUrl.searchParams.get('p') !== null
     ? parsedUrl.searchParams.get('p') ?? parsePageIdFromPathname(parsedUrl.pathname)
     : parsePageIdFromPathname(parsedUrl.pathname)
-  const block_id = parsedUrl.hash.slice(1)
+  const block_id = parsedUrl.hash.slice(1) || null
 
   let page, database;
   try {
