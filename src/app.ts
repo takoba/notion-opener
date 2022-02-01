@@ -1,6 +1,7 @@
 import { Client } from '@notionhq/client'
 import {App, ContextBlock, DividerBlock, KnownBlock, SectionBlock} from '@slack/bolt'
 import { URL } from 'url'
+import {GetBlockResponse, GetDatabaseResponse, GetPageResponse} from "@notionhq/client/build/src/api-endpoints"
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -23,20 +24,48 @@ app.message(/(https?:\/\/(www\.)?notion\.so\/[A-z0-9\-_]+\/[A-z0-9\-_#?=&;]+)/, 
   const page_id: string = parsedUrl.searchParams.get('p') !== null
     ? parsedUrl.searchParams.get('p') ?? parsePageIdFromPathname(parsedUrl.pathname)
     : parsePageIdFromPathname(parsedUrl.pathname)
-  const block_id = parsedUrl.hash.slice(1)
+  const block_id = parsedUrl.hash.slice(1) || null
 
-  const page = await notion.pages.retrieve({ page_id })
-  console.debug("DEBUG: dump `notion.pages.retrieve()`", { page_id }, page)
+  let page, database;
+  try {
+    page = await notion.pages.retrieve({ page_id })
+    console.debug("DEBUG: dump `notion.pages.retrieve()`", { page_id }, page)
+  } catch (error) {
+    console.error("ERROR: failed notion.pages.retrieve()", { error })
+
+    try {
+      database = await notion.databases.retrieve({ database_id: page_id })
+      console.debug("DEBUG: dump `notion.databases.retrieve()`", { database_id: page_id }, database)
+    } catch (error) {
+      console.error("ERROR: failed notion.databases.retrieve()", { error })
+      throw error
+    }
+  }
+
   const block = block_id ? await notion.blocks.retrieve({ block_id }) : null
   console.debug("DEBUG: dump `notion.blocks.retrieve()`", { block_id }, block)
+
+  const object = page || database as GetPageResponse | GetDatabaseResponse
+
+  const title = ((obj: GetPageResponse | GetDatabaseResponse) => {
+    if (obj.object === 'page') {
+      // @ts-ignore
+      return Object.values(obj.properties).find(elem => elem.id === 'title')?.title.find(elem => elem.plain_text !== undefined)?.plain_text
+    } else if (obj.object === 'database') {
+      // @ts-ignore
+      return obj.title.find(elem => elem.type === 'text')?.plain_text
+    }
+
+    // @ts-ignore
+    throw new Error(`Unexpected object. obj.object: ${obj.object}`)
+  })(object)
 
   const blocks: KnownBlock[] = []
   blocks.push({
     type: "section",
     text: {
       type: "mrkdwn",
-      // @ts-ignore
-      text: `*<${url}|${page && Object.values(page.properties).find(elem => elem.id === 'title')?.title.find(elem => elem.plain_text !== undefined)?.plain_text}>*`,
+      text: `*<${url}|${title}>*`,
     },
   } as SectionBlock)
 
