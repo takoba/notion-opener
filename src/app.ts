@@ -1,7 +1,7 @@
 import { Client } from '@notionhq/client'
 import {App, ContextBlock, DividerBlock, KnownBlock, SectionBlock} from '@slack/bolt'
 import { URL } from 'url'
-import {GetBlockResponse, GetDatabaseResponse, GetPageResponse} from "@notionhq/client/build/src/api-endpoints"
+import {GetDatabaseResponse, GetPageResponse} from "@notionhq/client/build/src/api-endpoints"
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
