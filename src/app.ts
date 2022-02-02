@@ -49,15 +49,12 @@ app.message(/(https?:\/\/(www\.)?notion\.so\/[A-z0-9\-_]+\/[A-z0-9\-_#?=&;]+)/, 
 
   const title = ((obj: GetPageResponse | GetDatabaseResponse) => {
     if (obj.object === 'page') {
-      // @ts-ignore
-      return Object.values(obj.properties).find(elem => elem.id === 'title')?.title.find(elem => elem.plain_text !== undefined)?.plain_text
+      return (('properties' in obj ? obj.properties : []) as { type: string; plain_text: string }[]).find(elem => elem.type === 'title')?.plain_text
     } else if (obj.object === 'database') {
-      // @ts-ignore
-      return obj.title.find(elem => elem.type === 'text')?.plain_text
+      return ('title' in obj ? obj.title : ('title' in obj.properties ? obj.properties.title : []) as { type: string; plain_text: string }[]).find(elem => elem.type === 'text')?.plain_text
     }
 
-    // @ts-ignore
-    throw new Error(`Unexpected object. obj.object: ${obj.object}`)
+    throw new Error(`Unexpected object. obj.object: ${('object' in obj) && (obj as { object: any }).object}`)
   })(object)
 
   const blocks: KnownBlock[] = []
