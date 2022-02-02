@@ -1,7 +1,7 @@
 import { Client } from '@notionhq/client'
-import {App, ContextBlock, DividerBlock, KnownBlock, SectionBlock} from '@slack/bolt'
 import { URL } from 'url'
 import {GetDatabaseResponse, GetPageResponse} from "@notionhq/client/build/src/api-endpoints"
+import {App, Context, ContextBlock, DividerBlock, KnownBlock, MessageEvent, SayFn, SectionBlock} from '@slack/bolt'
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -13,7 +13,7 @@ const notion = new Client({
 })
 
 
-app.message(/(https?:\/\/(www\.)?notion\.so\/[A-z0-9\-_]+\/[A-z0-9\-_#?=&;]+)/, async ({ message, context, say}) => {
+app.message(/(https?:\/\/(www\.)?notion\.so\/[A-z0-9\-_]+\/[A-z0-9\-_#?=&;]+)/, async ({ message, context, say}: { message: MessageEvent, context: Context, say: SayFn}) => {
   console.debug("DEBUG: dump `message`", message)
   console.debug("DEBUG: dump `context`", context)
 
@@ -93,8 +93,7 @@ app.message(/(https?:\/\/(www\.)?notion\.so\/[A-z0-9\-_]+\/[A-z0-9\-_#?=&;]+)/, 
   } as ContextBlock)
 
   await say({
-    // @ts-ignore
-    thread_ts: message.thread_ts ?? null,
+    thread_ts: 'thread_ts' in message ? message.thread_ts : undefined,
     attachments: [{
       blocks,
       fallback: `attachment failure. <${url}>`
