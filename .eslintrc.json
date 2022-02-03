@@ -9,7 +9,9 @@
     "eslint:recommended",
     "plugin:import/errors",
     "plugin:import/typescript",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:prettier/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -33,6 +35,14 @@
         "alphabetize": {
           "order": "asc"
         }
+      }
+    ],
+    "prettier/prettier": [
+      "error",
+      {
+        "printWidth": 120,
+        "semi": false,
+        "singleQuote": true
       }
     ]
   },
