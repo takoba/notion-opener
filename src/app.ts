@@ -1,6 +1,6 @@
 import { Client } from '@notionhq/client'
 import { URL } from 'url'
-import {GetDatabaseResponse, GetPageResponse} from "@notionhq/client/build/src/api-endpoints"
+import {GetBlockResponse, GetDatabaseResponse, GetPageResponse} from "@notionhq/client/build/src/api-endpoints"
 import {App, Context, ContextBlock, DividerBlock, KnownBlock, MessageEvent, SayFn, SectionBlock} from '@slack/bolt'
 
 const app = new App({
@@ -42,7 +42,7 @@ app.message(/(https?:\/\/(www\.)?notion\.so\/[A-z0-9\-_]+\/[A-z0-9\-_#?=&;]+)/, 
     }
   }
 
-  const block = block_id ? await notion.blocks.retrieve({ block_id }) : null
+  const block: GetBlockResponse|{[key: string]: any}|null = block_id ? await notion.blocks.retrieve({ block_id }) : null
   console.debug("DEBUG: dump `notion.blocks.retrieve()`", { block_id }, block)
 
   const object = page || database as GetPageResponse | GetDatabaseResponse
@@ -71,8 +71,13 @@ app.message(/(https?:\/\/(www\.)?notion\.so\/[A-z0-9\-_]+\/[A-z0-9\-_#?=&;]+)/, 
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        // @ts-ignore
-        "text": `${block[block.type].text.map(obj => obj.plain_text).join(' ') || 'content is unloaeded :cry:'}`,
+        "text": `${(
+          (
+            'type' in block
+            && block.type in block
+            && block[block.type] as { text: { plain_text: string }[]}
+          ) || { text: [] }
+        )?.text.map(obj => obj.plain_text).join(' ') || 'content is unloaeded :cry:'}`,
       }
     } as SectionBlock)
   }
