@@ -42,7 +42,7 @@ app.message(/(https?:\/\/(www\.)?notion\.so\/[A-z0-9\-_]+\/[A-z0-9\-_#?=&;]+)/, 
     }
   }
 
-  const block: GetBlockResponse|{[key: string]: any}|null = block_id ? await notion.blocks.retrieve({ block_id }) : null
+  const block: GetBlockResponse|{[key: string]: string|object|boolean}|null = block_id ? await notion.blocks.retrieve({ block_id }) : null
   console.debug("DEBUG: dump `notion.blocks.retrieve()`", { block_id }, block)
 
   const object = page || database as GetPageResponse | GetDatabaseResponse
@@ -54,7 +54,7 @@ app.message(/(https?:\/\/(www\.)?notion\.so\/[A-z0-9\-_]+\/[A-z0-9\-_#?=&;]+)/, 
       return ('title' in obj ? obj.title : ('title' in obj.properties ? obj.properties.title : []) as { type: string; plain_text: string }[]).find(elem => elem.type === 'text')?.plain_text
     }
 
-    throw new Error(`Unexpected object. obj.object: ${('object' in obj) && (obj as { object: any }).object}`)
+    throw new Error(`Unexpected object. obj.object: ${('object' in obj) && (obj as { object: string }).object}`)
   })(object)
 
   const blocks: KnownBlock[] = []
@@ -74,8 +74,8 @@ app.message(/(https?:\/\/(www\.)?notion\.so\/[A-z0-9\-_]+\/[A-z0-9\-_#?=&;]+)/, 
         "text": `${(
           (
             'type' in block
-            && block.type in block
-            && block[block.type] as { text: { plain_text: string }[]}
+            && block.type as string in block
+            && block[block.type as string] as { text: { plain_text: string }[]}
           ) || { text: [] }
         )?.text.map(obj => obj.plain_text).join(' ') || 'content is unloaeded :cry:'}`,
       }
