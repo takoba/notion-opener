@@ -57,9 +57,18 @@ app.message(
 
     const title = ((obj: GetPageResponse | GetDatabaseResponse) => {
       if (obj.object === 'page') {
-        return (('properties' in obj ? obj.properties : []) as { type: string; plain_text: string }[]).find(
-          (elem) => elem.type === 'title'
-        )?.plain_text
+        const titleProp = (
+          ('properties' in obj ? Object.values(obj.properties) : []) as {
+            type: string
+            [key: string | symbol]: string | object | boolean | null
+          }[]
+        ).find((elem) => elem.type === 'title') as {
+          id: 'title'
+          type: 'title'
+          title: { plain_text: string; [key: string | symbol]: string | object | boolean | null }[]
+        }
+        const titleObj = titleProp.title[0] ?? {}
+        return titleObj && 'plain_text' in titleObj ? titleObj.plain_text : 'missing title :cry:'
       } else if (obj.object === 'database') {
         return (
           'title' in obj
