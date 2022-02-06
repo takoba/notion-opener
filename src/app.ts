@@ -1,10 +1,10 @@
 import { URL } from 'url'
 import { Client } from '@notionhq/client'
-import { ClientOptions } from '@notionhq/client/build/src/Client'
+import { ClientOptions as NotionClientOptions } from '@notionhq/client/build/src/Client'
 import { GetBlockResponse, GetDatabaseResponse, GetPageResponse } from '@notionhq/client/build/src/api-endpoints'
 import {
-  App,
-  AppOptions,
+  App as BoltApp,
+  AppOptions as BoltAppOptions,
   Context,
   ContextBlock,
   DividerBlock,
@@ -14,26 +14,26 @@ import {
   SectionBlock,
 } from '@slack/bolt'
 
-type BoltAppOptions = Pick<AppOptions, 'token' | 'signingSecret' | 'receiver' | 'port'>
-const appOptions: BoltAppOptions = {
+type AppOptions = Pick<BoltAppOptions, 'token' | 'signingSecret' | 'receiver' | 'port'> &
+  Pick<NotionClientOptions, 'auth'>
+const appOptions: AppOptions = {
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
   port: Number(process.env.PORT) || 3000,
-}
-
-type NotionClientOptions = Pick<ClientOptions, 'auth'>
-const notionClientOptions: NotionClientOptions = {
   auth: process.env.NOTION_TOKEN,
 }
 
 type Props = {
-  appOptions: BoltAppOptions
-  notionClientOptions: NotionClientOptions
+  appOptions: AppOptions
 }
-;(async ({ appOptions, notionClientOptions }: Props) => {
-  const app = new App(appOptions)
+const App = async ({ appOptions }: Props) => {
+  const app = new BoltApp(
+    (({ token, signingSecret, port }: AppOptions) => ({ token, signingSecret, port }))(appOptions)
+  )
 
-  const notion = new Client(notionClientOptions)
+  const notion = new Client(
+    (({ auth }: AppOptions) => ({ auth }))(appOptions)
+  )
 
   app.message(
     /(https?:\/\/(www\.)?notion\.so\/[A-z0-9\-_]+\/[A-z0-9\-_#?=&;]+)/,
@@ -156,4 +156,6 @@ type Props = {
 
   await app.start()
   console.info(`INFO: Bolt app is running!`, { app })
-})({ appOptions, notionClientOptions })
+}
+
+App({ appOptions })
