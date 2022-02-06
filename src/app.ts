@@ -26,9 +26,7 @@ const App = ({ appOptions }: Props) => {
     (({ token, signingSecret, port }: AppOptions) => ({ token, signingSecret, port }))(appOptions)
   )
 
-  const notion = new Client(
-    (({ auth }: AppOptions) => ({ auth }))(appOptions)
-  )
+  const notion = new Client((({ auth }: AppOptions) => ({ auth }))(appOptions))
 
   app.message(
     /(https?:\/\/(www\.)?notion\.so\/[A-z0-9\-_]+\/[A-z0-9\-_#?=&;]+)/,
