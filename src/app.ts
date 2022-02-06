@@ -1,4 +1,3 @@
-import { URL } from 'url'
 import { Client } from '@notionhq/client'
 import { ClientOptions as NotionClientOptions } from '@notionhq/client/build/src/Client'
 import { GetBlockResponse, GetDatabaseResponse, GetPageResponse } from '@notionhq/client/build/src/api-endpoints'
@@ -13,7 +12,7 @@ import {
   SayFn,
   SectionBlock,
 } from '@slack/bolt'
-import { parsePageIdFromPathname } from './parser'
+import { parseIdsFromNotionUrl } from './parser'
 
 export type AppOptions = Pick<BoltAppOptions, 'token' | 'signingSecret' | 'receiver' | 'port'> &
   Pick<NotionClientOptions, 'auth'>
@@ -35,13 +34,7 @@ const App = ({ appOptions }: Props) => {
       console.debug('DEBUG: dump `context`', context)
 
       const url = context.matches[0].replace(/&amp;/, '&')
-
-      const parsedUrl = new URL(url)
-      const page_id: string =
-        parsedUrl.searchParams.get('p') !== null
-          ? parsedUrl.searchParams.get('p') ?? parsePageIdFromPathname(parsedUrl.pathname)
-          : parsePageIdFromPathname(parsedUrl.pathname)
-      const block_id = parsedUrl.hash.slice(1) || null
+      const { page_id, block_id } = parseIdsFromNotionUrl(url)
 
       let page, database
       try {
