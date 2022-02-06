@@ -13,6 +13,7 @@ import {
   SayFn,
   SectionBlock,
 } from '@slack/bolt'
+import { parsePageIdFromPathname } from './parser'
 
 export type AppOptions = Pick<BoltAppOptions, 'token' | 'signingSecret' | 'receiver' | 'port'> &
   Pick<NotionClientOptions, 'auth'>
@@ -38,11 +39,6 @@ const App = ({ appOptions }: Props) => {
       const url = context.matches[0].replace(/&amp;/, '&')
 
       const parsedUrl = new URL(url)
-      const parsePageIdFromPathname = (pathname: string) =>
-        pathname
-          .replace(/^\/[0-9A-z\-_]+\//, '')
-          .split('-')
-          .splice(-1)[0]
       const page_id: string =
         parsedUrl.searchParams.get('p') !== null
           ? parsedUrl.searchParams.get('p') ?? parsePageIdFromPathname(parsedUrl.pathname)
