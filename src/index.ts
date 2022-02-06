@@ -1,3 +1,4 @@
+import { App as BoltApp } from '@slack/bolt'
 import App, { AppOptions, Props } from './app'
 
 const appOptions: AppOptions = {
@@ -7,4 +8,9 @@ const appOptions: AppOptions = {
   auth: process.env.NOTION_TOKEN,
 }
 
-App({ appOptions } as Props)
+const app: BoltApp = App({ appOptions } as Props)
+
+;(async () => {
+  await app.start()
+  console.info(`INFO: Bolt app is running!`, { app })
+})()

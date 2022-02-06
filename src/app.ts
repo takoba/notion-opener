@@ -20,7 +20,7 @@ export type AppOptions = Pick<BoltAppOptions, 'token' | 'signingSecret' | 'recei
 export type Props = {
   appOptions: AppOptions
 }
-const App = async ({ appOptions }: Props) => {
+const App = ({ appOptions }: Props) => {
   const app = new BoltApp(
     (({ token, signingSecret, port }: AppOptions) => ({ token, signingSecret, port }))(appOptions)
   )
@@ -148,8 +148,7 @@ const App = async ({ appOptions }: Props) => {
     }
   )
 
-  await app.start()
-  console.info(`INFO: Bolt app is running!`, { app })
+  return app
 }
 
 export default App
