@@ -14,16 +14,10 @@ import {
   SectionBlock,
 } from '@slack/bolt'
 
-type AppOptions = Pick<BoltAppOptions, 'token' | 'signingSecret' | 'receiver' | 'port'> &
+export type AppOptions = Pick<BoltAppOptions, 'token' | 'signingSecret' | 'receiver' | 'port'> &
   Pick<NotionClientOptions, 'auth'>
-const appOptions: AppOptions = {
-  token: process.env.SLACK_BOT_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
-  port: Number(process.env.PORT) || 3000,
-  auth: process.env.NOTION_TOKEN,
-}
 
-type Props = {
+export type Props = {
   appOptions: AppOptions
 }
 const App = async ({ appOptions }: Props) => {
@@ -158,4 +152,4 @@ const App = async ({ appOptions }: Props) => {
   console.info(`INFO: Bolt app is running!`, { app })
 }
 
-App({ appOptions })
+export default App
