@@ -76,3 +76,9 @@ In advance, do "1. Create a new Slack App" & "2. Create a new Notion Intergratio
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 After that, enter `<heroku-app-host>/slack/events` to`"Event Subscriptions > Request URL", and submit.
+
+
+## Special Thanks
+- This app have inspired by https://github.com/MH4GF/notion-deglacer
+- This app's README.md have inspired by https://github.com/slackapi/bolt-js-getting-started-app
+- Thanks for your kindness by @Connehito org members!
