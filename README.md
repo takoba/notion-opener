@@ -78,6 +78,13 @@ In advance, do "1. Create a new Slack App" & "2. Create a new Notion Intergratio
 After that, enter `<heroku-app-host>/slack/events` to`"Event Subscriptions > Request URL", and submit.
 
 
+## Contributing
+Found a bug or have a question about this project? We'd love to hear from you!
+
+1. Browse to https://github.com/takoba/notion-opener/issues
+2. If there are no duplicates, create a new issue
+
+
 ## Special Thanks
 - This app have inspired by https://github.com/MH4GF/notion-deglacer
 - This app's README.md have inspired by https://github.com/slackapi/bolt-js-getting-started-app
