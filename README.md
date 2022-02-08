@@ -1,4 +1,6 @@
 # notion-opener
+<img alt="notion-opener's icon" src="https://user-images.githubusercontent.com/1389856/153389132-07839a7c-4876-48fc-9ab7-b80fd879f8ea.png" width="256px" height="256px" />
+
 Link Opener for https://notion.so/
 
 ![GitHub release (latest by date)](https://img.shields.io:/github/v/release/takoba/notion-opener)
