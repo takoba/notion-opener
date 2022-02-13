@@ -205,4 +205,6 @@ $RECYCLE.BIN/
 
 # Webpack output dir
 dist/*
+*.js
+*.js.map
 !dist/.gitkeep
