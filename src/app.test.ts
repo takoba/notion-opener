@@ -2,6 +2,7 @@ import { App as BoltApp, LogLevel, Receiver, ReceiverEvent, GenericMessageEvent 
 import { StringIndexed } from '@slack/bolt/dist/types/helpers'
 import { ConsoleLogger } from '@slack/logger'
 import { WebClient } from '@slack/web-api'
+import page_0044fa85dd0a45e9878be0cfca4b2349_json from './__fixtures__/page_0044fa85dd0a45e9878be0cfca4b2349.json'
 import App, { AppOptions, Props } from './app'
 
 const metadataResult: { user_id: string; bot_id: string } = {
@@ -19,12 +20,12 @@ jest.mock('@slack/web-api', () => {
   }
 })
 const mockNotionClient = {
-  pages: { retrieve: jest.fn() },
+  pages: { retrieve: jest.fn().mockImplementation(() => page_0044fa85dd0a45e9878be0cfca4b2349_json) },
   blocks: { retrieve: jest.fn() },
   databases: { retrieve: jest.fn() },
 }
 jest.mock('@notionhq/client', () => {
-  return { Client: jest.fn().mockImplementation(() => mockNotionClient)}
+  return { Client: jest.fn().mockImplementation(() => mockNotionClient) }
 })
 
 class FakeReceiver implements Receiver {
@@ -122,6 +123,24 @@ describe('App', () => {
     await receiver.send(eventBody as StringIndexed)
     console.debug(logStacks)
 
-    expect(mockWebClient.chat.postMessage).toHaveBeenCalledWith(expect.objectContaining({ text }))
+    const expected = {
+      attachments: [
+        {
+          blocks: [
+            { text: { text: `*<${text}|takoba>*`, type: 'mrkdwn' }, type: 'section' },
+            { type: 'divider' },
+            {
+              elements: [{ text: `Posted by <https://github.com/takoba/notion-opener|notion-opener>`, type: 'mrkdwn' }],
+              type: 'context',
+            },
+          ],
+          fallback: `attachment failure. <${text}>`,
+        },
+      ],
+      channel: eventBody.channel,
+      thread_ts: undefined,
+      token,
+    }
+    expect(mockWebClient.chat.postMessage).toHaveBeenCalledWith(expected)
   })
 })
