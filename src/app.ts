@@ -14,7 +14,10 @@ import {
 } from '@slack/bolt'
 import { parseIdsFromNotionUrl } from './parser'
 
-export type AppOptions = Pick<BoltAppOptions, 'token' | 'signingSecret' | 'receiver' | 'port'> &
+export type AppOptions = Pick<
+  BoltAppOptions,
+  'token' | 'signingSecret' | 'receiver' | 'port' | 'socketMode' | 'developerMode'
+> &
   Pick<NotionClientOptions, 'auth'>
 
 export type Props = {
@@ -22,7 +25,14 @@ export type Props = {
 }
 const App = ({ appOptions }: Props) => {
   const app = new BoltApp(
-    (({ token, signingSecret, port }: AppOptions) => ({ token, signingSecret, port }))(appOptions)
+    (({ token, signingSecret, port, receiver, socketMode = false, developerMode = false }: AppOptions) => ({
+      token,
+      signingSecret,
+      port,
+      receiver,
+      socketMode,
+      developerMode,
+    }))(appOptions)
   )
 
   const notion = new Client((({ auth }: AppOptions) => ({ auth }))(appOptions))
