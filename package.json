@@ -13,7 +13,8 @@
   "scripts": {
     "start": "node dist/index.js",
     "build": "tsc --outDir dist/",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
   },
   "devDependencies": {
     "@slack/logger": "^3.0.0",
