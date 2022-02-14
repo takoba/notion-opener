@@ -82,18 +82,6 @@ describe('App', () => {
   let app: BoltApp
   let mockedWebClient: WebClient
 
-  beforeAll(() => {
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    // ;(<any>Client).request = jest.fn().mockImplementation(() => {
-    //   const res = {}
-    //   return Promise.resolve(res)
-    // })
-    // ;(<any>Client).pages = { retrieve: jest.fn() }
-    // ;(<any>Client).blocks = { retrieve: jest.fn() }
-    // ;(<any>Client).databases = { retrieve: jest.fn() }
-    /* eslint-enable @typescript-eslint/no-explicit-any */
-  })
-
   beforeEach(() => {
     receiver = new FakeReceiver()
 
