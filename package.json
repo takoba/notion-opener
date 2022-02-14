@@ -1,6 +1,6 @@
 {
   "name": "notion-opener",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Link Opener for https://notion.so/",
   "repository": "https://github.com/takoba/notion-opener",
   "author": "takoba <plane25@gmail.com>",
